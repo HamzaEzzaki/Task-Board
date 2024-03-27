@@ -15,7 +15,7 @@
       <div class="min-h-96 bg-cardbg rounded-lg p-4">
         <div class="flex flex-col justify-between h-full">
           <div class="flex-1">
-            <draggable v-model="column.tasks" group="nice" class="h-[160px]  rounded-lg mb-1 " drag-class="drag" ghost-class="ghost"  @change="log( $event,column.key)">
+            <draggable v-model="column.tasks" group="nice" class="h-[160px]  rounded-lg mb-1 " drag-class="drag" ghost-class="ghost"  @change="move( $event,column.key)">
                 <template v-if="filterLevel !== 'All'">
                       <TaskItem v-for="(task, taskIndex) in column.tasks.filter(t => t.level === filterLevel)" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" />
                       </template>
@@ -122,6 +122,8 @@ const currentColumnkey = computed(() => store.state.currentColumnkey)
 const localtask= ref({ name: '', description: '' ,level: ''})
 const showUpdateModal = computed(() => store.state.showUpdateModal)
 const updatedTask = computed(() => store.state.updatedTask)
+var AddedEvent =  ref('')
+var newcolumnKey =  ref('')
 
 // Mapping actions
 const openModal = (columnkey) => {
@@ -204,10 +206,60 @@ function handleSelectedLevel(level) {
   // Now you can use the selected level in your parent component
 }
 
-const log = (evt,columnkey) => {
-    console.log("wal l7maaaaaaaaaaaaaaa9",evt)
-    console.log("wal l7maaaaaaaaaaaaaaa9",columnkey)
+const move = (event,columnkey) => {
+
+
+
+  if( event.moved ) {
+    const currentIndex = event.moved.newIndex;
+    const previousIndex = event.moved.oldIndex;
+    store.dispatch('moveTaskWithinColumn', { columnkey, currentIndex, previousIndex});
+    
   }
+  else{
+    if(event.added){
+      console.log("added")
+      AddedEvent = event;
+      newcolumnKey = columnkey
+    }
+    else if (event.removed){
+      console.log(AddedEvent, event ,"new : ",newcolumnKey, "old", columnkey )
+      const task = event.removed.element
+      const previousColumnkey =  columnkey
+      const newColumnkey = newcolumnKey
+      const currentIndex =  AddedEvent.added.newIndex
+
+          // console.log("okay : ", event, columnkey )
+          // console.log(event)
+          // console.log("removed") A -> A 1 -> 2
+          // console.log("previousColumnkey : ", previousColumnkey, "newColumnkey", newColumnkey,"task : ", task, "currentIndex", currentIndex )
+
+          store.dispatch('moveTaskBetweenColumns', { previousColumnkey, newColumnkey, task, currentIndex  });
+
+
+    }
+
+
+    
+  }
+
+
+
+  // if (event.previousContainer === event.container) {
+  //   const columnId =  event.previousContainer.data.colunmTask.id ;
+  //   const currentIndex = event.currentIndex ;
+  //   const previousIndex = event .previousIndex ;
+  //   this.store.dispatch(updateTaskOrderInColumn({ columnId, currentIndex, previousIndex }));
+  // } else {
+  //   const task = event.previousContainer.data.colunmTask.tasks[event.previousIndex];
+  //   const previousColumnId =  event.previousContainer.data.colunmTask.id;
+  //   const newColumnId = event.container.data.colunmTask.id ;
+  //   const currentIndex = event.currentIndex ;
+  //   this.store.dispatch(moveTaskBetweenColumns({ previousColumnId , newColumnId, task, currentIndex }));
+  
+  // }
+    
+}
 </script>
 
 
