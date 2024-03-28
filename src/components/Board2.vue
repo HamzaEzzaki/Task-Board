@@ -5,28 +5,37 @@
      <!-- Filter dropdown -->
      <FilterDropdown @selected="handleSelectedLevel" />
     <!-- Task Columns -->
-    <div class="flex justify-between gap-8 mr-8 ml-8 px-4 py-2">
-    <div v-for="(column, index) in columns" :key="index" class="relative w-1/4">
+    <div  class="flex justify-between gap-8 mr-8 ml-8 px-4 py-2">
+    <div v-for="(column, index) in columns" :key="index" class="relative w-1/4 ">
       <h2 class="text-lg text-btntxt font-semibold mb-4">{{ column.title }}</h2>
       <div class="absolute top-0 right-0 flex justify-between pr-1 py-2">
-        <img src="../assets/plus.svg" alt="Logo" @click="openModal(column.key)" class=" bg-primary2 hover:bg-btnhover  h-4 w-4 ml-1">
+        <img src="../assets/plus.svg" alt="Logo" @click="openModal(column.key)" class="  hover:h-5   h-4 w-4 ml-1 cursor-pointer ">
         <img src="../assets/3dots.svg" alt="Logo" class=" h-4 w-4 ml-1">
       </div>
-      <div class="min-h-96 bg-cardbg rounded-lg p-4">
+      <div class="min-h-[70vh] bg-cardbg rounded-lg mb-4 p-4 overflow-y-auto " >
         <div class="flex flex-col justify-between h-full">
           <div class="flex-1">
             <draggable v-model="column.tasks" group="nice" class="h-[160px]  rounded-lg mb-1 " drag-class="drag" ghost-class="ghost"  @change="move( $event,column.key)">
                 <template v-if="filterLevel !== 'All'">
                       <TaskItem v-for="(task, taskIndex) in column.tasks.filter(t => t.level === filterLevel)" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" />
-                      </template>
+                      <div  @click="openModal(column.key)"  class=" flex justify-center items-center cursor-pointer mt-3">
+                          <img src="../assets/plus.svg" alt="Logo" class=" h-4 w-4 mr-1">
+                          <span class="text-base hover:text-lg text-btntxt font-semibold">Add Task</span>
+                      </div>
+                </template>
                 <template v-else>
                       <TaskItem v-for="(task, taskIndex) in column.tasks" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" @change="log(column.key)" />
-                      </template>
+                      <div  @click="openModal(column.key)"  class=" flex justify-center items-center cursor-pointer mt-3">
+                          <img src="../assets/plus.svg" alt="Logo" class=" h-4 w-4 mr-1">
+                          <span class="text-base hover:text-lg text-btntxt font-semibold">Add Task</span>
+                      </div>
+                </template>
             </draggable>
 
           </div>
         </div>
       </div>
+      
     </div>
   </div>
   <!-- Task Modal -->
@@ -245,19 +254,7 @@ const move = (event,columnkey) => {
 
 
 
-  // if (event.previousContainer === event.container) {
-  //   const columnId =  event.previousContainer.data.colunmTask.id ;
-  //   const currentIndex = event.currentIndex ;
-  //   const previousIndex = event .previousIndex ;
-  //   this.store.dispatch(updateTaskOrderInColumn({ columnId, currentIndex, previousIndex }));
-  // } else {
-  //   const task = event.previousContainer.data.colunmTask.tasks[event.previousIndex];
-  //   const previousColumnId =  event.previousContainer.data.colunmTask.id;
-  //   const newColumnId = event.container.data.colunmTask.id ;
-  //   const currentIndex = event.currentIndex ;
-  //   this.store.dispatch(moveTaskBetweenColumns({ previousColumnId , newColumnId, task, currentIndex }));
-  
-  // }
+ 
     
 }
 </script>

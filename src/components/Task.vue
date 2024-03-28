@@ -7,7 +7,7 @@
     <div class="flex items-center gap-3">
     <img src="../assets/check.svg" alt="">
     <span class="text-lg font-bold">{{ task.name }}{{ task.index }}</span>
-    <img @click="edit = !edit" v-show="isHovered" class="h-4 w-4 mb-3 ml-auto" src="../assets/3dots.svg" alt="Menu">
+    <img @click="edit = !edit" v-show="isHovered" class="h-4 w-4 mb-3 ml-auto cursor-pointer " src="../assets/3dots.svg" alt="Menu">
     <div v-on-click-outside="closeModal2">
         <div v-show="edit" class="absolute right-0 w-32 z-10 rounded-xl bg-white shadow-sm border-[1px] border-gray-200 shadow-gray-300 p-4 flex flex-col gap-3">
             <div @click="openUpdateModal" class="flex gap-3 items-center hover:text-indigo-800  text-btntxt">
@@ -54,7 +54,7 @@
 
       <div class="flex gap-4 items-center">
         <img class="h-7" src="../assets/u1.svg" alt="">
-        <span id="current-date">Today - teest</span>
+        <span class="font-normal text-lg" id="current-date">Today -{{ getCurrentDate() }}</span>
       </div>
     </div>
   </div>
@@ -72,6 +72,13 @@ const props = defineProps({
     required: true
   }
 });
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const options = { month: 'long', day: 'numeric' };
+  return currentDate.toLocaleDateString('en-US', options);
+}
+
 function closeModal1() {
   showlevel.value = false;
   console.log("click outside");
