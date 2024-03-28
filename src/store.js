@@ -128,7 +128,7 @@ export default createStore({
     
     openModal({ commit }, column) {
       commit('setCurrentColumnKey', column);
-      console.log('openmodal ', column)
+   
       commit('setShowModal', true);
     },
     closeModal({ commit }) {
@@ -165,7 +165,7 @@ export default createStore({
     },
 
     updateTask({ commit },   updatedTask) {
-      console.log('action :' , updatedTask)
+    
       commit('UPDATE_TASK', { updatedTask});
     
       commit('HIDE_UPDATE_MODAL');

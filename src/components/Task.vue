@@ -1,20 +1,19 @@
 
 <template>
   <div>
-  <div  class=" h-[160px] card bg-white rounded-xl flex flex-col text-gray-text p-2 mt-3 textbold gap-1 shadow-gray3 shadow-md" @mouseover="isHovered = true"
-    @mouseleave="isHovered = false">
+  <div  class=" h-[160px] w-full card bg-white rounded-xl flex flex-col text-gray-text p-2 mt-3 textbold gap-1 shadow-gray3 shadow-md" >
 
     <div class="flex items-center gap-3">
     <img src="../assets/check.svg" alt="">
     <span class="text-lg font-bold">{{ task.name }}{{ task.index }}</span>
-    <img @click="edit = !edit" v-show="isHovered" class="h-4 w-4 mb-3 ml-auto cursor-pointer " src="../assets/3dots.svg" alt="Menu">
+    <img @click="edit = !edit" class="h-4 w-4 mb-3 ml-auto cursor-pointer " src="../assets/3dots.svg" alt="Menu">
     <div v-on-click-outside="closeModal2">
         <div v-show="edit" class="absolute right-0 w-32 z-10 rounded-xl bg-white shadow-sm border-[1px] border-gray-200 shadow-gray-300 p-4 flex flex-col gap-3">
-            <div @click="openUpdateModal" class="flex gap-3 items-center hover:text-indigo-800  text-btntxt">
+            <div @click="openUpdateModal" class="flex gap-3 items-center hover:text-indigo-800 cursor-pointer text-btntxt">
                 <img src="../assets/edit.svg" alt="">
                 <span class="text-base font-semibold ">Edit</span>
             </div>
-            <div @click="deleteTask" class="flex gap-3 items-center hover:text-red  text-btntxt">
+            <div @click="deleteTask" class="flex gap-3 items-center hover:text-red cursor-pointer text-btntxt">
                 <img  src="../assets/delete.svg" alt="">
                 <span class="text-base font-semibold  ">Delete</span>
             </div>
@@ -81,12 +80,10 @@ const getCurrentDate = () => {
 
 function closeModal1() {
   showlevel.value = false;
-  console.log("click outside");
 }
 
 function closeModal2() {
   edit.value = false;
-  console.log("click outside2");
 }
 
 function getBtnColor(getButtonColor) {
@@ -122,7 +119,6 @@ const getButtonColor = (name) => {
 const showlevel = ref(false);
 const buttonLabel = ref(props.task.level);
 const buttonColor = ref(getButtonColor(props.task.level)); // Default color
-const isHovered = ref(false);
 const edit = ref(false);
 const emits = defineEmits(['delete-task', 'update-task'])
 // Methods
@@ -157,21 +153,33 @@ const openUpdateModal = () => {
 .visible {
   visibility: visible;
 }
+
 .invisible {
   visibility: hidden;
 }
+
 .drag .card {
- transform: rotate(5deg);
+ transform: rotate(5deg) ;
+ opacity: 1 !important;
 }
+
+.chosen {
+  opacity: 1 !important;
+}
+.chosen >div  {
+  opacity: 1 !important;
+}
+
+
 .ghost{
-/* background: lightgray;
-border-radius: 6px; */
+
 background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%235E6FE1FF' stroke-width='3' stroke-dasharray='20%2c 10%2c 18' stroke-dashoffset='18' stroke-linecap='square'/%3e%3c/svg%3e");
 border-radius: 16px;
+opacity: 1 !important;
 }
 .ghost >div {
   visibility: hidden;
-
+  opacity: 1 !important;
 }
 </style>
 

@@ -5,28 +5,38 @@
      <!-- Filter dropdown -->
      <FilterDropdown @selected="handleSelectedLevel" />
     <!-- Task Columns -->
-    <div class="flex justify-between gap-8 mr-8 ml-8 px-4 py-2">
-    <div v-for="(column, index) in columns" :key="index" class="relative w-1/4">
+    <div  class="flex justify-between gap-8 mr-8 ml-8 px-4 py-2">
+    <div v-for="(column, index) in columns" :key="index" class="relative w-1/4 ">
       <h2 class="text-lg text-btntxt font-semibold mb-4">{{ column.title }}</h2>
       <div class="absolute top-0 right-0 flex justify-between pr-1 py-2">
-        <img src="../assets/plus.svg" alt="Logo" @click="openModal(column.key)" class=" bg-primary2 hover:bg-btnhover  h-4 w-4 ml-1">
+        <img src="../assets/plus.svg" alt="Logo" @click="openModal(column.key)" class="  hover:h-5   h-4 w-4 ml-1 cursor-pointer ">
         <img src="../assets/3dots.svg" alt="Logo" class=" h-4 w-4 ml-1">
       </div>
-      <div class="min-h-96 bg-cardbg rounded-lg p-4">
+      <div class="min-h-[70vh] bg-cardbg rounded-lg mb-4 p-4 overflow-y-auto " >
         <div class="flex flex-col justify-between h-full">
           <div class="flex-1">
-            <draggable v-model="column.tasks" group="nice" class="h-[160px]  rounded-lg mb-1 " drag-class="drag" ghost-class="ghost"  @change="log( $event,column.key)">
+            <draggable v-model="column.tasks" group="nice" class="h-[160px] w-full  rounded-lg mb-1 " drag-class="drag" ghost-class="ghost" chosen-class="chosen"  @change="move( $event,column.key)">
                 <template v-if="filterLevel !== 'All'">
                       <TaskItem v-for="(task, taskIndex) in column.tasks.filter(t => t.level === filterLevel)" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" />
-                      </template>
+                      <div  @click="openModal(column.key)"  class=" flex justify-center items-center cursor-pointer mt-3">
+                          <img src="../assets/plus.svg" alt="Logo" class=" h-4 w-4 mr-1">
+                          <span class="text-base hover:text-lg text-btntxt font-semibold">Add Task</span>
+                      </div>
+                </template>
                 <template v-else>
-                      <TaskItem v-for="(task, taskIndex) in column.tasks" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" @change="log(column.key)" />
-                      </template>
+                      <TaskItem  v-for="(task, taskIndex) in column.tasks" :key="taskIndex" :task="task" @update-task="openUpdateModal(column.key, task)" @delete-task="handleDeleteTask(column.key, task.id)" @change="log(column.key)" />
+                      <div  @click="openModal(column.key)"  class=" flex justify-center items-center cursor-pointer mt-3">
+                          <img src="../assets/plus.svg" alt="Logo" class=" h-4 w-4 mr-1">
+                          <span class="text-base hover:text-lg text-btntxt font-semibold">Add Task</span>
+                      </div>
+                </template>
             </draggable>
-
+          <draggable>
+          </draggable>
           </div>
         </div>
       </div>
+      
     </div>
   </div>
   <!-- Task Modal -->
@@ -122,17 +132,17 @@ const currentColumnkey = computed(() => store.state.currentColumnkey)
 const localtask= ref({ name: '', description: '' ,level: ''})
 const showUpdateModal = computed(() => store.state.showUpdateModal)
 const updatedTask = computed(() => store.state.updatedTask)
+var AddedEvent =  ref('')
+var newcolumnKey =  ref('')
 
 // Mapping actions
 const openModal = (columnkey) => {
-  console.log( "currentkey ",columnkey)
   store.dispatch('openModal', columnkey)
   
 }
 
 const addTask = ( task) => {
   store.dispatch('addTask', { task })
-  console.log('addTask', columns )
 }
 const closeModal = () => store.dispatch('closeModal')
 
@@ -166,7 +176,6 @@ const updateTask = () => {
   task.name = localtask.value.name   
   task.description = localtask.value.description   
   task.level = localtask.value.level  
-  console.log("board action",task)
   store.dispatch('updateTask',task )
   // store.commit('SET_UPDATED_TASK', null);
 }
@@ -176,7 +185,6 @@ const updateTask = () => {
 
 const closeUpdateModal = () => {
   store.dispatch('hideUpdateModal');
-  console.log("hidiiiing")
 }
 
 
@@ -200,14 +208,46 @@ const updateFilterLevel = (level) => {
 
 function handleSelectedLevel(level) {
   filterLevel.value = level;
-  console.log('Selected level in parent:', level);
   // Now you can use the selected level in your parent component
 }
 
-const log = (evt,columnkey) => {
-    console.log("wal l7maaaaaaaaaaaaaaa9",evt)
-    console.log("wal l7maaaaaaaaaaaaaaa9",columnkey)
+const move = (event,columnkey) => {
+
+
+
+  if( event.moved ) {
+    const currentIndex = event.moved.newIndex;
+    const previousIndex = event.moved.oldIndex;
+    store.dispatch('moveTaskWithinColumn', { columnkey, currentIndex, previousIndex});
+    
   }
+  else{
+    if(event.added){
+      AddedEvent = event;
+      newcolumnKey = columnkey
+    }
+    else if (event.removed){
+      const task = event.removed.element
+      const previousColumnkey =  columnkey
+      const newColumnkey = newcolumnKey
+      const currentIndex =  AddedEvent.added.newIndex
+
+          
+
+          store.dispatch('moveTaskBetweenColumns', { previousColumnkey, newColumnkey, task, currentIndex  });
+
+
+    }
+
+
+    
+  }
+
+
+
+ 
+    
+}
 </script>
 
 
